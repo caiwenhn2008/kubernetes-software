@@ -1,20 +1,27 @@
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: guestbook-ui
+  name: jenkins-deployment
+  namespace: jenkins
 spec:
-  replicas: 5
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: guestbook-ui
+      app: jenkins
   template:
     metadata:
       labels:
-        app: guestbook-ui
+        app: jenkins
     spec:
       containers:
-      - image: gcr.io/heptio-images/ks-guestbook-demo:0.2
-        name: guestbook-ui
+      - name: jenkins
+        image: jenkins/jenkins:lts
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        volumeMounts:
+        - name: jenkins-home
+          mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-home
+          emptyDir: {}
